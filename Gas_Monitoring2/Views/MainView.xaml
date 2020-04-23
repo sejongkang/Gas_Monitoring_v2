@@ -1,0 +1,102 @@
+﻿<UserControl xmlns:dxm="http://schemas.devexpress.com/winfx/2008/xaml/map"  xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"  
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"  
+    x:Class="Gas_Monitoring2.Views.MainView"
+    xmlns:local="clr-namespace:Gas_Monitoring2.Models"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
+    xmlns:dxdo="http://schemas.devexpress.com/winfx/2008/xaml/docking"    
+    xmlns:ViewModels="clr-namespace:Gas_Monitoring2.ViewModels"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:Views="clr-namespace:Gas_Monitoring2.Views"
+             mc:Ignorable="d" d:DesignHeight="900" d:DesignWidth="1650" Background="White">
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:DispatcherService />
+        <dx:DialogService Name="service1" DialogWindowStartupLocation="CenterOwner">
+            <dx:DialogService.ViewTemplate>
+                <DataTemplate>
+                    <Views:SettingView/>
+                </DataTemplate>
+            </dx:DialogService.ViewTemplate>
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="dx:ThemedWindow">
+                    <Setter Property="ResizeMode" Value="CanResize"/>
+                    <Setter Property="Width" Value="400"/>
+                    <Setter Property="Height" Value="630" />
+                    <Setter Property="MinWidth" Value="400"/>
+                    <Setter Property="MinHeight" Value="630" />
+                </Style>
+            </dx:DialogService.DialogStyle>
+        </dx:DialogService>
+        <dx:DialogService Name="service2" SetWindowOwner="False" DialogWindowStartupLocation="CenterOwner">
+            <dx:DialogService.ViewTemplate>
+                <DataTemplate>
+                    <Views:AlertView/>
+                </DataTemplate>
+            </dx:DialogService.ViewTemplate>
+            <dx:DialogService.DialogStyle>
+                <Style TargetType="dx:ThemedWindow">
+                    <Setter Property="ResizeMode" Value="CanResize"/>
+                    <Setter Property="Width" Value="750"/>
+                    <Setter Property="Height" Value="690"/>
+                    <Setter Property="MinWidth" Value="750"/>
+                    <Setter Property="MinHeight" Value="690"/>
+                </Style>
+            </dx:DialogService.DialogStyle>
+        </dx:DialogService>
+        <dx:WindowedDocumentUIService>
+            <dx:WindowedDocumentUIService.WindowStyle>
+                <Style TargetType="dx:DXWindow">
+                    <Setter Property="Width" Value="300" />
+                    <Setter Property="Height" Value="300" />
+                </Style>
+            </dx:WindowedDocumentUIService.WindowStyle>
+        </dx:WindowedDocumentUIService>
+        <dxmvvm:KeyToCommand KeyGesture="F1" Command="{Binding PopHelpCommand}" />
+    </dxmvvm:Interaction.Behaviors>
+    <UserControl.DataContext>
+        <ViewModels:MainViewModel/>
+    </UserControl.DataContext>
+    <Grid>
+        <dxdo:DockLayoutManager Grid.Column="0" FloatingMode="Desktop">
+            <dxdo:LayoutGroup Caption="LayoutRoot">
+                <dxdo:LayoutGroup Orientation="Vertical" ItemWidth="2*">
+                    <dxdo:LayoutPanel Caption="Map" ShowCloseButton="False">
+                        <WebBrowser x:Name="Browser" Grid.Row="1" local:WebBrowserUtility.ObjectForScripting="{Binding OpenTab}" local:WebBrowserUtility.UriSource="{Binding Address}" ScrollViewer.VerticalScrollBarVisibility="Hidden" LoadCompleted="Browser_LoadCompleted"/>
+                    </dxdo:LayoutPanel>
+                    <dxdo:LayoutPanel Caption="Log" ShowCloseButton="False">
+                        <Grid>
+                            <Views:LogView/>
+                        </Grid>
+                    </dxdo:LayoutPanel>
+                </dxdo:LayoutGroup>
+                <dxdo:LayoutPanel Caption="Main" ItemWidth="5*" ShowCloseButton="False">
+                    <Grid Grid.Column="1"  Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <dx:LoadingDecorator Grid.RowSpan="2" OwnerLock="LoadingContent" IsSplashScreenShown="{Binding Loding_visible, Mode=TwoWay}" SplashScreenLocation="CenterContainer">
+                            <dx:DXTabControl Grid.RowSpan="2" SelectedTabItem="{Binding Selected_tab, Mode=TwoWay}" ItemsSource="{Binding TabItems, Mode=TwoWay}" Background="Black">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="TabHiding" Command="{Binding HidingCommand}" PassEventArgsToCommand="True"/>
+                                </dxmvvm:Interaction.Behaviors>
+                                <dx:DXTabControl.View>
+                                    <dx:TabControlStretchView HeaderLocation="Top" HideButtonShowMode="InAllTabsAndHeaderArea" NewButtonShowMode="NoWhere" RemoveTabItemsOnHiding="False" ShowHeaderMenu="True" CloseWindowOnSingleTabItemHiding="False" DragDropMode="ReorderOnly"/>
+                                </dx:DXTabControl.View>
+                            </dx:DXTabControl>
+                            <dx:LoadingDecorator.SplashScreenTemplate>
+                                <DataTemplate>
+                                    <dx:WaitIndicator DeferedVisibility="True" Content="Network Disconnected...."/>
+                                </DataTemplate>
+                            </dx:LoadingDecorator.SplashScreenTemplate>
+                        </dx:LoadingDecorator>
+                        <Label Grid.Row="2" Visibility="{Binding Error}" Content="DB 연결이 끊어졌습니다. 연결 설정을 확인하세요." HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="#FFF00000" BorderBrush="Black" BorderThickness="3" Foreground="White" Padding="0" FontWeight="Bold" FontSize="16"/>
+                    </Grid>
+                </dxdo:LayoutPanel>
+            </dxdo:LayoutGroup>
+        </dxdo:DockLayoutManager>
+    </Grid>
+</UserControl>
