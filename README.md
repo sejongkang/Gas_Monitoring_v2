@@ -2,6 +2,7 @@
 Gas Monitoring Program Version 2. Map added and UI changed
 
 가스 취득기의 가스 종류와 농도 등을 실시간 및 기록 그래프로 모니터링하는 프로그램. Version 2.
+(대학원생의 짠한 결과물..) 
 
 ## 추가 기능
 1) 지도에서 가스 취득기 위치 및 현황 표시 - KaKaoMap
